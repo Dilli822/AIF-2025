@@ -1,0 +1,2 @@
+https://www.redhat.com/en/blog/12-factor-app
+https://12factor.net/

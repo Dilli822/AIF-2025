@@ -1,0 +1,3 @@
+https://docs.python.org/3/library/logging.html
+https://docs.pytest.org/en/stable/getting-started.html
+https://youtu.be/YbpKMIUjvK8
