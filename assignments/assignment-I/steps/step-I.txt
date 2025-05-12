@@ -1,0 +1,181 @@
+Let's build your FastAPI project from scratch step by step using the 12-Factor principles.
+We'll create a simple app (e.g., Health Check + URL Status Checker)
+and structure it cleanly, using tools like Docker, GitHub Actions, and pre-commit.
+
+
+------ Building From Scratch ----------
+✅ Step 1: Set up your development environment
+1.1. Create project folder
+bash
+mkdir fastapi-monitor
+cd fastapi-monitor
+
+1.2. Create and activate a virtual environment
+bash
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+1.3. Install required packages
+bash
+pip install fastapi uvicorn[standard] python-dotenv pydantic
+1.4. Freeze dependencies
+bash
+pip freeze > requirements.txt
+
+✅ Step 2: Build the FastAPI app
+2.1. Create the directory structure
+bash
+mkdir app
+touch app/main.py app/config.py
+
+2.2. Create .env file
+bash
+touch .env
+Contents:
+.env
+APP_NAME=FastAPI Monitor
+ENV=development
+
+2.3. app/config.py – Load config using Pydantic
+python
+
+from pydantic_settings import BaseSettings
+
+class Settings(BaseSettings):
+    app_name: str = "Default App"
+    env: str = "production"
+
+    class Config:
+        env_file = ".env"
+
+settings = Settings()
+
+
+2.4. app/main.py – FastAPI app with /health endpoint
+python
+
+# app/main.py
+from fastapi import FastAPI
+from app.config import settings
+from app.routes import monitor
+
+app = FastAPI(title=settings.app_name)
+
+app.include_router(monitor.router)
+
+2.5. Run the app
+bash
+uvicorn app.main:app --reload
+Open browser: http://127.0.0.1:8000/health
+
+
+
+fastapi-healthapp/
+├── app/
+│   ├── __init__.py
+│   ├── main.py
+│   ├── config.py
+│   └── routes/
+│       ├── __init__.py
+│       └── monitor.py
+├── tests/
+│   ├── __init__.py
+│   └── test_health.py
+
+------------------------------------------------------------------------------------
+🔧 Step 1: Project Setup
+Open your terminal and run:
+bash
+mkdir fastapi-uptime-monitor
+cd fastapi-uptime-monitor
+python -m venv venv
+source venv/bin/activate  # Use `venv\Scripts\activate` on Windows
+
+📦 Step 2: Install Dependencies
+bash
+pip install fastapi uvicorn[standard] python-dotenv pydantic pytest
+Then save them:
+
+bash
+pip freeze > requirements.txt
+🗂 Step 3: Create Project Structure
+bash
+mkdir app app/routes tests
+touch app/main.py app/config.py app/routes/monitor.py tests/test_health.py .env README.md
+Your structure now:
+
+fastapi-uptime-monitor/
+│
+├── app/
+│   ├── main.py
+│   ├── config.py
+│   └── routes/
+│       └── monitor.py
+├── tests/
+│   └── test_health.py
+├── .env
+├── requirements.txt
+└── README.md
+
+🧱 Step 4: Build FastAPI App
+app/main.py:
+python
+
+from fastapi import FastAPI
+from app.routes import monitor
+from app.config import settings
+
+app = FastAPI(title=settings.app_name)
+
+@app.get("/health")
+def health_check():
+    return {"status": "OK"}
+
+app.include_router(monitor.router)
+⚙️ Step 5: Add Environment Configuration
+.env:
+ini
+APP_NAME=Uptime Monitor
+app/config.py:
+
+python
+from pydantic import BaseSettings
+
+class Settings(BaseSettings):
+    app_name: str = "Default App"
+
+    class Config:
+        env_file = ".env"
+
+settings = Settings()
+
+
+🔁 Step 6: Create a Route
+app/routes/monitor.py:
+python
+from fastapi import APIRouter
+
+router = APIRouter()
+
+@router.get("/check")
+def check_url():
+    return {"message": "Coming soon!"}
+
+✅ Step 7: Add Test Case
+tests/test_health.py:
+python
+from fastapi.testclient import TestClient
+from app.main import app
+
+client = TestClient(app)
+
+def test_health():
+    res = client.get("/health")
+    assert res.status_code == 200
+    assert res.json() == {"status": "OK"}
+
+Run tests:
+bash
+pytest
+
+------------------------------------------------------------------------------------

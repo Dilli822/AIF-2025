@@ -1,0 +1,43 @@
+
+
+Step 1: Create a docker file named dockerfile inside the project directory
+dockerfile
+FROM python:3.10-slim
+
+WORKDIR /app
+COPY . /app
+RUN pip install --no-cache-dir -r requirements.txt
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+Step 2: Build the Docker image:
+
+After updating/creating the requirements.txt, rebuild/build the Docker image:
+bash
+docker build -t uptime-monitor .
+
+(env) dilli@MacBookAir fastapi-healthapp % docker build -t uptime-monitor .
+
+[+] Building 13.1s (9/9) FINISHED                    docker:desktop-linux
+ => [internal] load build definition from dockerfile                 0.0s
+ => => transferring dockerfile: 210B                                 0.0s
+ => [internal] load metadata for docker.io/library/python:3.10-slim  1.2s
+ => [internal] load .dockerignore                                    0.0s
+ => => transferring context: 2B                                      0.0s
+ => [1/4] FROM docker.io/library/python:3.10-slim@sha256:e1013c40c0  0.0s
+ => [internal] load build context                                    0.1s
+ => => transferring context: 237.64kB                                0.1s
+ => CACHED [2/4] WORKDIR /app                                        0.0s
+ => [3/4] COPY . /app                                                0.4s
+ => [4/4] RUN pip install --no-cache-dir -r requirements.txt        10.9s
+ => exporting to image                                               0.4s
+ => => exporting layers                                              0.4s
+ => => writing image sha256:e9b68e93218cfa8f2a14fe63a90012504db61ac  0.0s
+ => => naming to docker.io/library/uptime-monitor                    0.0s
+(env) dilli@MacBookAir fastapi-healthapp %
+
+Step 3:
+Run the Docker container:
+Once the image builds successfully, you can run the container:
+bash
+docker run -p 8000:8000 --env-file .env uptime-monitor
